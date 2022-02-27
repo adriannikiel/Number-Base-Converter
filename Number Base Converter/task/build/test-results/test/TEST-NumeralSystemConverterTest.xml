@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="NumeralSystemConverterTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2022-02-27T23:38:32" hostname="ZSHWRW001872" time="0.11">
+  <properties/>
+  <testcase name="start" classname="NumeralSystemConverterTest" time="0.11"/>
+  <system-out><![CDATA[?[1;31m
+Start test 1?[0m
+Enter number in decimal system: > 103
+Enter target base: > 16
+?[1;31m
+Start test 2?[0m
+Enter number in decimal system: > 178
+Enter target base: > 16
+?[1;31m
+Start test 3?[0m
+Enter number in decimal system: > 845
+Enter target base: > 16
+?[1;31m
+Start test 4?[0m
+Enter number in decimal system: > 438
+Enter target base: > 2
+?[1;31m
+Start test 5?[0m
+Enter number in decimal system: > 814
+Enter target base: > 8
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
