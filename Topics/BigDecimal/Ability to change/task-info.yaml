@@ -1,0 +1,24 @@
+type: choice
+is_multiple_choice: false
+options:
+- text: '<b>BigDecimal</b> instances are immutable only when declared with the <b>final</b>
+    keyword '
+- text: All <b>BigDecimal</b> instances are immutable
+- text: All <b>BigDecimal</b> instances are mutable
+message_correct: Congratulations!
+message_incorrect: Incorrect solution
+files:
+- name: src/Task.java
+  visible: true
+  text: |
+    // You can experiment here, it won’t be checked
+
+    public class Task {
+      public static void main(String[] args) {
+        // put your code here
+      }
+    }
+  learner_created: false
+feedback_link: https://hyperskill.org/learn/step/13513#comment
+status: Solved
+record: -1
