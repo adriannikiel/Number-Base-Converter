@@ -1,6 +1,9 @@
 package converter;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.RoundingMode;
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class Main {
@@ -54,13 +57,41 @@ public class Main {
 
     private static String convertNumber(String number, int sourceBase, int targetBase) {
 
-        String decimal = convertNumberToDecimal(number, sourceBase);
-        String result = convertNumberFromDecimal(decimal, targetBase);
+        String[] splittedNumber = null;
+        String integerPart = "0";
+        String fractionalPart = "0";
+
+        if (number.contains(".")) {
+            splittedNumber = number.split("\\.");
+            integerPart = splittedNumber[0];
+            fractionalPart = splittedNumber[1];
+        } else if (number.contains(",")) {
+            splittedNumber = number.split(",");
+            integerPart = splittedNumber[0];
+            fractionalPart = splittedNumber[1];
+        } else {
+            integerPart = number;
+            fractionalPart = "0";
+        }
+
+        String decimalIntegerPart = convertIntegerNumberToDecimal(integerPart, sourceBase);
+        String decimalFractionalPart = convertFractionalNumberToDecimal(fractionalPart, sourceBase);
+
+        String integerResult = convertIntegerNumberFromDecimal(decimalIntegerPart, targetBase);
+        String fractionalPartlyResult = convertFractionalNumberFromDecimal(decimalFractionalPart, targetBase, 5);
+
+        String result = null;
+        if (number.contains(".") || number.contains(",")) {
+            result = integerResult + "." + getFractionalResult(fractionalPartlyResult, 5);
+        } else {
+            result = integerResult;
+        }
 
         return result;
     }
 
-    private static String convertNumberToDecimal(String code, int baseAsInt) {
+
+    private static String convertIntegerNumberToDecimal(String code, int baseAsInt) {
 
         BigInteger base = BigInteger.valueOf(baseAsInt);
 
@@ -78,7 +109,25 @@ public class Main {
         return sum.toString();
     }
 
-    private static String convertNumberFromDecimal(String numberAsString, int baseAsInt) {
+    private static String convertFractionalNumberToDecimal(String code, int baseAsInt) {
+
+        BigDecimal base = BigDecimal.valueOf(baseAsInt);
+
+        BigDecimal sum = BigDecimal.ZERO;
+        int codeLength = code.length();
+
+        for (int i = 0; i < codeLength; i++) {
+            char c = code.toUpperCase().charAt(i);
+            int number = mapCodeToNumber(c);
+
+            //sum += number * Math.pow(base, j);
+            sum = sum.add(BigDecimal.valueOf(number).divide(base.pow(i + 1),10, RoundingMode.DOWN) );
+        }
+
+        return sum.setScale(5, RoundingMode.DOWN).toString();
+    }
+
+    private static String convertIntegerNumberFromDecimal(String numberAsString, int baseAsInt) {
 
         StringBuilder builder = new StringBuilder();
 
@@ -91,9 +140,39 @@ public class Main {
             number = number.divide(base);  //number /= base
         }
 
-        return !builder.toString().equals("") ?  builder.reverse().toString() : "0";
+        return !builder.toString().equals("") ? builder.reverse().toString() : "0";
     }
 
+    private static String convertFractionalNumberFromDecimal(String numberAsString, int baseAsInt, int scale) {
+
+        StringBuilder builder = new StringBuilder();
+
+        BigDecimal number = new BigDecimal(numberAsString);
+        BigDecimal base = BigDecimal.valueOf(baseAsInt);
+
+        int i = 0;
+        while (number.compareTo(BigDecimal.ZERO) > 0 && i < scale) {  //number > 0
+            BigDecimal multiplicationResult = number.multiply(base);
+
+            BigDecimal integerReminder = multiplicationResult.setScale(0, RoundingMode.DOWN);
+            builder.append(mapNumberToCode(integerReminder.intValue()));
+
+            number = multiplicationResult.remainder(BigDecimal.ONE);
+            i++;
+        }
+
+        return !builder.toString().equals("") ? builder.toString() : "0";
+    }
+
+
+    private static String getFractionalResult(String fractionalPartlyResult, int scale) {
+
+        char[] fill = new char[scale];
+        Arrays.fill(fill, '0');
+        String zeroes = new String(fill);
+
+        return (fractionalPartlyResult + zeroes).substring(0, scale);
+    }
 
 
     private static char mapNumberToCode(int number) {   // '0'..'9', 'A'..'Z'
